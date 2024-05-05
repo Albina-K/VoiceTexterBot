@@ -1,56 +1,39 @@
 ﻿using System;
+using System.Text;
 using Telegram.Bot.Polling;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace VoiceTexterBot
 {
-    class Bot
+    public class Program
     {
-        private ITelegramBotClient _telegramClient;
-
-        public Bot(ITelegramBotClient telegramClient)
+        public static async Task Main()
         {
-            _telegramClient = telegramClient;
+            Console.OutputEncoding = Encoding.Unicode;
+
+            //Объект, отвечающий за постоянный жизненный цикл приложения
+            var host = new HostBuilder()
+                .ConfigureServices((hostContext, services) => ConfigureServices(services)) //задаем конфигурацию
+                .UseConsoleLifetime() // Позволяет поддерживать приложение активным в консоли
+                .Build(); // Собираем
+
+            Console.WriteLine("Сервис запущен");
+            // Запускаем сервис
+            await host.RunAsync();
+            Console.WriteLine("Сервис остановлен");
         }
 
-        async Task HandleUpdateAsync(ITelegramBotClient botclient, Update update, CancellationToken cancellationToken)
+        static void ConfigureServices(IServiceCollection services)
         {
-            //обрабатываем нажатие на кнопки из Telegram Bot API: https://core.telegram.org/bots/api#callbackquery
-            if (update.Type == UpdateType.CallbackQuery)
-            {
-                await _telegramClient.SendTextMessageAsync(update.Message.Chat.Id, "Вы нажали кнопку", cancellationToken: cancellationToken);
-                return;
-            }
-
-            //обрабатываем входящие сообщения из elegram Bot API: https://core.telegram.org/bots/api#message
-            if (update.Type == UpdateType.Message)
-            {
-                await _telegramClient.SendTextMessageAsync(update.Message.Chat.Id, "Вы отправили сообщение", cancellationToken: cancellationToken);
-                return;
-            }
-
-            Task HandleErrorAsyns(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
-            {
-                //задаем сообщение об ошибке в зависимости от тогоб какая именно ошибка произошла
-                var errorMessage = exception switch
-                {
-                    ApiRequestException apiRequestException => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
-                    _ => exception.ToString()
-                };
-
-                //выводим в консоль информацию об ошибке
-                Console.WriteLine(errorMessage);
-
-                //задержка перед повторным подключением
-                Console.WriteLine("Ожидаем 10 секунд перед повторным подключением");
-                Thread.Sleep(10000);
-
-                return Task.CompletedTask;
-            }
-
+            // Регистрируем объект TelegramBotClient c токеном подключения
+            services.AddSingleton<ITelegramBotClient>(provider => new TelegramBotClient("6926607102:AAF9nVB9DpV3090e3UsYf_cHMr9iVs2IP4s"));//Добавляет в контейнер с зависимостями сервис TelegramBotClient (через интерфейс ITelegramBotClient).
+            // Регистрируем постоянно активный сервис бота
+            services.AddHostedService<Bot>();
         }
-    }
+    }   
 }
