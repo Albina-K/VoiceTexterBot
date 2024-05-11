@@ -42,7 +42,7 @@ namespace VoiceTexterBot.Controllers
             // Отправляем в ответ уведомление о выборе
                         
             await _telegramClient.SendTextMessageAsync(callbackQuery.From.Id, 
-                $"<b> Язык аудио -{languageText}.{Environment.NewLine}<b>"+
+                $"<b> Язык аудио -{languageText}.{Environment.NewLine}</b>"+
                 $"{Environment.NewLine} Можно поменять в главном меню.", cancellationToken: ct, parseMode: ParseMode.Html);
         }
     }

@@ -38,8 +38,8 @@ namespace VoiceTexterBot.Services
 
         public string Process(string languageCode)
         {
-            string inputAudioPath = Path.Combine(_appSettings.DownloadsFolder, $"{_appSettings.AudioFileName}. {_appSettings.InputAudioFormat}");
-            string outputAudioPath = Path.Combine(_appSettings.DownloadsFolder, $"{_appSettings.AudioFileName}. {_appSettings.OutputAudioFormat}");
+            string inputAudioPath = Path.Combine(_appSettings.DownloadsFolder, $"{_appSettings.AudioFileName}.{_appSettings.InputAudioFormat}");
+            string outputAudioPath = Path.Combine(_appSettings.DownloadsFolder, $"{_appSettings.AudioFileName}.{_appSettings.OutputAudioFormat}");
 
             Console.WriteLine("Начинаем конвертацию...");
             AudioConverter.TryConvert(inputAudioPath, outputAudioPath);
