@@ -47,7 +47,7 @@ namespace VoiceTexterBot.Utilities
                         // Сохраняем текстовый вывод в JSON-объект и извлекаем данные
                         JObject sentenceObj = JObject.Parse(sentenceJson);
                         string sentence = (string)sentenceObj["text"];
-                        textBuffer.Append(StringExtension.UppercaseFirst(sentence) + ". ");
+                        textBuffer.Append(StringExtension.UppercaseFirst(sentence) + ".");
                     }
                 }
             }
